@@ -1,17 +1,19 @@
 --https://github.com/soumith/cvpr2015/blob/master/Deep%20Learning%20with%20Torch.ipynb
 
+----activate th on mac
+--. /Users/lzhan/torch/install/bin/torch-activate
 
 -- os.execute('wget -c https://s3.amazonaws.com/torch7/data/cifar10torchsmall.zip')
 -- os.execute('unzip cifar10torchsmall.zip')
-trainset = torch.load('cifar10-train.t7')
-testset = torch.load('cifar10-test.t7')
+trainset = torch.load('data/cifar10-train.t7')
+testset = torch.load('data/cifar10-test.t7')
 classes = {'airplane', 'automobile', 'bird', 'cat',
-           'deer', 'dog', 'frog', 'horse', 'ship', 'truck'}
+           'deer', 'dog', 'frog', 'horse', 'ship', 'truck'} --10 classes
 
 print(trainset)
 print(#trainset.data)
 
-itorch.image(trainset.data[100]) -- display the 100-th image in dataset
+--itorch.image(trainset.data[100]) -- display the 100-th image in dataset
 print(classes[trainset.label[100]])
 
 -- ignore setmetatable for now, it is a feature beyond the scope of this tutorial. It sets the index operator.
@@ -29,7 +31,7 @@ end
 print(trainset:size()) -- just to test
 
 print(trainset[33]) -- load sample number 33.
-itorch.image(trainset[33][1])
+--itorch.image(trainset[33][1])
 redChannel = trainset.data[{ {}, {1}, {}, {}  }] -- this picks {all images, 1st channel, all vertical pixels, all horizontal pixels}
 
 print(#redChannel)
@@ -57,7 +59,7 @@ net:add(nn.SpatialMaxPooling(2,2,2,2))
 net:add(nn.View(16*5*5))                    -- reshapes from a 3D tensor of 16x5x5 into 1D tensor of 16*5*5
 net:add(nn.Linear(16*5*5, 120))             -- fully connected layer (matrix multiplication between input and weights)
 net:add(nn.Linear(120, 84))
-net:add(nn.Linear(84, 10))                   -- 10 is the number of outputs of the network (in this case, 10 digits)
+net:add(nn.Linear(84, 10))                   -- 10 is the number of outputs of the network (in this case, 10 digits) (10 classes)
 net:add(nn.LogSoftMax())                     -- converts the output to a log-probability. Useful for classification problems
 
 criterion = nn.ClassNLLCriterion()
@@ -73,7 +75,7 @@ trainer:train(trainset)
 --5. Test the network, print accuracy
 
 print(classes[testset.label[100]])
-itorch.image(testset.data[100])
+--itorch.image(testset.data[100])
 
 
 
@@ -89,7 +91,7 @@ print(horse:mean(), horse:std())
 
 
 print(classes[testset.label[100]])
-itorch.image(testset.data[100])
+--itorch.image(testset.data[100])
 predicted = net:forward(testset.data[100])
 
 
