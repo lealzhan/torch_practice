@@ -3,6 +3,10 @@
 ----activate th on mac
 --. /Users/lzhan/torch/install/bin/torch-activate
 
+-------------------------------
+--1. Load and normalize data---
+-------------------------------
+
 -- os.execute('wget -c https://s3.amazonaws.com/torch7/data/cifar10torchsmall.zip')
 -- os.execute('unzip cifar10torchsmall.zip')
 trainset = torch.load('data/cifar10-train.t7')
@@ -48,6 +52,12 @@ for i=1,3 do -- over each image channel
     trainset.data[{ {}, {i}, {}, {}  }]:div(stdv[i]) -- std scaling
 end
 
+--1. Load and normalize data end
+
+
+----------------------------------------
+--2. Time to define our neural network--
+----------------------------------------
 
 require 'nn';
 
@@ -62,21 +72,26 @@ net:add(nn.Linear(120, 84))
 net:add(nn.Linear(84, 10))                   -- 10 is the number of outputs of the network (in this case, 10 digits) (10 classes)
 net:add(nn.LogSoftMax())                     -- converts the output to a log-probability. Useful for classification problems
 
-criterion = nn.ClassNLLCriterion()
+----------------------------------------
+--3. Let us use a Log-likelihood classification loss. It is well suited for most classification problems.
+----------------------------------------
+criterion = nn.ClassNLLCriterion()           --?
 
+-------------------------------
+--4. Train the neural network--
+-------------------------------
 trainer = nn.StochasticGradient(net, criterion)
 trainer.learningRate = 0.001
 trainer.maxIteration = 5 -- just do 5 epochs of training.
 
-
 trainer:train(trainset)
 
 
---5. Test the network, print accuracy
-
+---------------------------------------
+--5. Test the network, print accuracy--
+---------------------------------------
 print(classes[testset.label[100]])
 --itorch.image(testset.data[100])
-
 
 
 testset.data = testset.data:double()   -- convert from Byte tensor to Double tensor
@@ -93,7 +108,6 @@ print(horse:mean(), horse:std())
 print(classes[testset.label[100]])
 --itorch.image(testset.data[100])
 predicted = net:forward(testset.data[100])
-
 
 
 -- the output of the network is Log-Probabilities. To convert them to probabilities, you have to take e^x 
@@ -117,7 +131,6 @@ for i=1,10000 do
 end
 
 print(correct, 100*correct/10000 .. ' % ')
-
 
 
 --which class predict better
